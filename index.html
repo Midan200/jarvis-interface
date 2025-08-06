@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JARVIS</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        .container { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+        .chat-box { border-radius: 10px; padding: 15px; margin-bottom: 20px; background-color: #161b22; overflow-y: auto; max-height: 70vh; }
+        .message { margin-bottom: 10px; line-height: 1.5; }
+        .user-message { text-align: right; color: #58a6ff; }
+        .jarvis-message { text-align: left; color: #a4a4a4; }
+        .input-container { display: flex; }
+        input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #30363d; border-radius: 5px; background-color: #0d1117; color: #c9d1d9; }
+        button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #21262d; color: #c9d1d9; cursor: pointer; margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-box" id="chatBox">
+            <div class="message jarvis-message">גרוויס: שלום לך. אני מוכנה.</div>
+        </div>
+        <div class="input-container">
+            <input type="text" id="userInput" placeholder="שאל את גרוויס..." />
+            <button id="sendButton">שלח</button>
+        </div>
+    </div>
+
+    <script>
+        // API KEY - החלף את המקום הזה במפתח ה-API שלך
+        const API_KEY = '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D';
+        const API_ENDPOINT = 'https://jarvis-api.googledevsandbox.com/api/v1/chat';
+
+        document.getElementById('sendButton').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput').value;
+            if (userInput.trim() === '') return;
+
+            // הוספת הודעת המשתמש לצ'אט
+            const chatBox = document.getElementById('chatBox');
+            const userMessageDiv = document.createElement('div');
+            userMessageDiv.className = 'message user-message';
+            userMessageDiv.textContent = userInput;
+            chatBox.appendChild(userMessageDiv);
+
+            document.getElementById('userInput').value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // שליחת הבקשה ל-API של גרוויס
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({ message: userInput })
+                });
+
+                const data = await response.json();
+                const jarvisResponse = data.response;
+
+                // הוספת תשובת גרוויס לצ'אט
+                const jarvisMessageDiv = document.createElement('div');
+                jarvisMessageDiv.className = 'message jarvis-message';
+                jarvisMessageDiv.textContent = `גרוויס: ${jarvisResponse}`;
+                chatBox.appendChild(jarvisMessageDiv);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.className = 'message jarvis-message';
+                errorMessageDiv.textContent = 'גרוויס: מצטער, אירעה שגיאה בחיבור.';
+                chatBox.appendChild(errorMessageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
