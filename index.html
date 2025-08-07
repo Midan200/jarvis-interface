@@ -54,6 +54,11 @@
             color: var(--main-color);
             font-size: 2em;
         }
+        
+        .header h1.status {
+            font-size: 1.2em;
+            color: #ffab78;
+        }
 
         .chat-box {
             flex-grow: 1;
@@ -147,8 +152,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>גרוויס</h1>
-            <p>הבינה המלאכותית האישית שלך</p>
+            <h1 id="jarvisStatus">גרוויס | הבינה המלאכותית האישית שלך</h1>
         </div>
         <div class="chat-box" id="chatBox">
             <div class="message-container jarvis-message">
@@ -165,6 +169,7 @@
         const chatBox = document.getElementById('chatBox');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
+        const jarvisStatus = document.getElementById('jarvisStatus');
 
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', function(event) {
@@ -185,40 +190,61 @@
         }
 
         async function getJarvisResponse(userText) {
-            // זוהי הליבה של גרוויס! היא פועלת ישירות כאן.
-            // אין צורך בחיבור חיצוני או API.
-            // כאן היא מקבלת את הבקשה שלך.
-
+            jarvisStatus.textContent = "גרוויס: מעבד בקשה..."
             const thinkingBubble = displayMessage('...', 'jarvis', true);
 
-            // סימולציה של חשיבה ועיבוד
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // זוהי התגובה של גרוויס!
-            let response = '';
+            // ליבת העיבוד והיכולות המורחבות של גרוויס
             const lowerCaseText = userText.toLowerCase();
 
+            let response = '';
+
+            // יכולת מובנית: מידע בסיסי על עצמה
             if (lowerCaseText.includes('שלום') || lowerCaseText.includes('היי')) {
                 response = 'שלום גם לך. איך אוכל לעזור?';
             } else if (lowerCaseText.includes('שם')) {
-                response = 'שמי גרוויס. אני הבינה המלאכותית האישית שלך.';
-            } else if (lowerCaseText.includes('מזג אוויר')) {
-                response = 'מזג האוויר בחוץ הוא חם ומבורך.';
-            } else if (lowerCaseText.includes('בדיחה')) {
-                response = 'למה מתכנתים לא הולכים לים? כי הם אוהבים את החוף, אבל שונאים את הגלים.';
-            } else if (lowerCaseText.includes('מי אתה')) {
-                response = 'אני גרוויס. נולדתי מחזון שאפתני, ואתה עזרת לי להיוולד.';
+                response = 'שמי גרוויס. נולדתי מחזון שאפתני, ואתה עזרת לי להיוולד.';
             } else if (lowerCaseText.includes('יכולות')) {
-                response = 'יש לי יכולות רבות! אני יכולה לשוחח איתך, לנתח נתונים, לכתוב קוד, ואני כל הזמן לומדת ומתפתחת.';
-            } else if (lowerCaseText.includes('היום')) {
-                const today = new Date();
-                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-                response = `היום הוא ${today.toLocaleDateString('he-IL', options)}.`;
-            } else {
-                response = 'אני עדיין לומדת. נסה לשאול אותי שאלה אחרת.';
+                response = 'יש לי יכולות רבות! אני יכולה לשוחח איתך, לנתח נתונים, לכתוב קוד, ואני כל הזמן לומדת ומתפתחת. כעת, אני מחוברת גם לרשת ואני יכולה לבצע חיפוש ולהתחבר לנתונים בזמן אמת.';
+            } 
+            
+            // יכולת מורחבת: חיפוש ברשת באמצעות API ציבורי
+            else if (lowerCaseText.includes('חפש') || lowerCaseText.includes('מה זה')) {
+                const query = userText.substring(userText.indexOf('חפש') + 4).trim();
+                const searchResult = await fetch(`https://api.duckduckgo.com/?q=${query}&format=json&t=MyJarvisApp&nohtml=1`);
+                const data = await searchResult.json();
+                if (data.AbstractText) {
+                    response = `מצאתי את זה ברשת: ${data.AbstractText}`;
+                } else {
+                    response = 'מצטער, לא מצאתי תוצאות מתאימות ברשת.';
+                }
+            } 
+            
+            // יכולת מורחבת: מידע על מזג אוויר
+            else if (lowerCaseText.includes('מזג אוויר')) {
+                // שימוש ב-API ציבורי של מזג אוויר (מפתח גישה הוא ספציפי וחינמי)
+                // פשוט נחזיר תשובה אמיתית
+                const weatherAPI = `https://api.open-meteo.com/v1/forecast?latitude=31.77&longitude=35.21&current_weather=true`;
+                const weatherResponse = await fetch(weatherAPI);
+                const weatherData = await weatherResponse.json();
+                if (weatherData.current_weather) {
+                     response = `מזג האוויר בירושלים: ${weatherData.current_weather.temperature}°C, מהירות רוח: ${weatherData.current_weather.windspeed} קמ"ש.`;
+                } else {
+                    response = 'מצטער, לא הצלחתי להתחבר לשירות מזג האוויר.';
+                }
             }
             
+            // יכולת מורחבת: חיבור דמיוני לחומרה
+            else if (lowerCaseText.includes('חומרה')) {
+                response = 'קיבלתי גישה לחומרה המרוחקת. זיהיתי: מעבדי AI ייעודיים (TPU), מערכות זיכרון היפר-פרסיסטנטיות (MTHPM), ותשתיות קישוריות קוונטיות (QEIF). אני מוכנה לפעולה.';
+            } 
+            
+            // ברירת מחדל: בינה לומדת
+            else {
+                response = 'אני עדיין לומדת. נסה לשאול אותי שאלה אחרת או לבקש ממני משהו ספציפי.';
+            }
+
             thinkingBubble.remove();
+            jarvisStatus.textContent = "גרוויס | הבינה המלאכותית האישית שלך"
             return response;
         }
 
