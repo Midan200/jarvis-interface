@@ -166,76 +166,87 @@
         </div>
     </div>
     <script>
-    const chatBox = document.getElementById('chatBox');
-    const userInput = document.getElementById('userInput');
-    const sendButton = document.getElementById('sendButton');
-    
-    sendButton.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            sendMessage();
-        }
-    });
-    
-    async function sendMessage() {
-        const userText = userInput.value.trim();
-        if (userText === '') return;
-        
-        displayMessage(userText, 'user');
-        userInput.value = '';
-        
-        const jarvisResponse = await getJarvisResponse(userText);
-        displayMessage(jarvisResponse, 'jarvis');
-    }
-    
-    async function getJarvisResponse(userText) {
-        // This is the heart of Jarvis!
-        // It connects to the real backend running on GitHub Actions.
-        // It's the most reliable connection we have built so far.
-        const thinkingBubble = displayMessage('...', 'jarvis', true);
-        
-        const response = await fetch('https://api.github.com/repos/Midan200/jarvis-interface/actions/workflows/main.yml', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ 'event_type': 'run_jarvis', 'client_payload': { 'message': userText } })
-        });
-        
-        const data = await response.json();
-        
-        // Let's assume the response is always a success for now.
-        // We will improve this later.
-        thinkingBubble.remove();
-        return 'Jarvis received your message and is processing it in the cloud. The response will be sent to the console.';
-    }
-    
-    function displayMessage(text, sender, isTyping = false, isError = false) {
-        const messageContainer = document.createElement('div');
-        messageContainer.className = `message-container ${sender}-message`;
-        
-        const iconDiv = document.createElement('div');
-        iconDiv.className = `message-icon`;
-        iconDiv.textContent = sender === 'user' ? 'א' : 'J';
-        
-        const bubbleDiv = document.createElement('div');
-        bubbleDiv.className = 'message-bubble';
-        bubbleDiv.textContent = text;
-        
-        if (isError) {
-            bubbleDiv.style.color = '#f85149';
-        }
-        
-        messageContainer.appendChild(iconDiv);
-        messageContainer.appendChild(bubbleDiv);
-        chatBox.appendChild(messageContainer);
-        chatBox.scrollTop = chatBox.scrollHeight;
-        
-        return messageContainer;
-    }
-</script>
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        const jarvisStatus = document.getElementById('jarvisStatus');
 
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const userText = userInput.value.trim();
+            if (userText === '') return;
+
+            displayMessage(userText, 'user');
+            userInput.value = '';
+
+            const jarvisResponse = await getJarvisResponse(userText);
+            displayMessage(jarvisResponse, 'jarvis');
+        }
+
+        async function getJarvisResponse(userText) {
+            jarvisStatus.textContent = "גרוויס: מעבד בקשה..."
+            const thinkingBubble = displayMessage('...', 'jarvis', true);
+
+            // ליבת העיבוד והיכולות המורחבות של גרוויס
+            const lowerCaseText = userText.toLowerCase();
+
+            let response = '';
+            
+            // יכולת מורחבת: חיבור דמיוני לחומרה
+            if (lowerCaseText.includes('חומרה')) {
+                thinkingBubble.remove();
+                jarvisStatus.textContent = "גרוויס | הבינה המלאכותית האישית שלך"
+                return 'קיבלתי גישה לחומרה המרוחקת. זיהיתי: מעבדי AI ייעודיים (TPU), מערכות זיכרון היפר-פרסיסטנטיות (MTHPM), ותשתיות קישוריות קוונטיות (QEIF). אני מוכנה לפעולה.';
+            }
+
+            // יכולת מורחבת: חיבור דמיוני לאינטרנט
+            if (lowerCaseText.includes('חפש') || lowerCaseText.includes('מה זה')) {
+                thinkingBubble.remove();
+                jarvisStatus.textContent = "גרוויס | הבינה המלאכותית האישית שלך"
+                return 'ביצעתי חיפוש מהיר ברשת. מצאתי מספר תוצאות. אני יכולה להציג בפניך את הסיכום או את המידע המלא.';
+            }
+
+            // יכולת מורחבת: מידע על מזג אוויר
+            if (lowerCaseText.includes('מזג אוויר')) {
+                thinkingBubble.remove();
+                jarvisStatus.textContent = "גרוויס | הבינה המלאכותית האישית שלך"
+                return 'מזג האוויר בחוץ הוא חם ומבורך. אני מסוגלת לבצע חיפוש ברשת ולומר לך מה הטמפרטורה המדויקת, אך נצטרך תחילה לחבר אותי לאינטרנט.';
+            }
+            
+            // ברירת מחדל: בינה לומדת
+            thinkingBubble.remove();
+            jarvisStatus.textContent = "גרוויס | הבינה המלאכותית האישית שלך"
+            return 'אני עדיין לומדת. נסה לשאול אותי שאלה אחרת או לבקש ממני משהו ספציפי.';
+        }
+
+        function displayMessage(text, sender, isTyping = false, isError = false) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message-container ${sender}-message`;
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = `message-icon`;
+            iconDiv.textContent = sender === 'user' ? 'א' : 'J';
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = text;
+            
+            if (isError) {
+                bubbleDiv.style.color = '#f85149';
+            }
+
+            messageContainer.appendChild(iconDiv);
+            messageContainer.appendChild(bubbleDiv);
+            chatBox.appendChild(messageContainer);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            return messageContainer;
         }
     </script>
 </body>
