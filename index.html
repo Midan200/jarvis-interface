@@ -161,11 +161,7 @@
             <button id="sendButton">▲</button>
         </div>
     </div>
-
     <script>
-        const API_KEY = '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D';
-        const API_ENDPOINT = 'https://jarvis-api.googledevsandbox.com/api/v1/chat';
-
         const chatBox = document.getElementById('chatBox');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
@@ -181,41 +177,49 @@
             const userText = userInput.value.trim();
             if (userText === '') return;
 
-            // Display user message
             displayMessage(userText, 'user');
             userInput.value = '';
 
-            // Display "typing..." message from JARVIS
-            const jarvisTypingBubble = displayMessage('...', 'jarvis', true);
+            const jarvisResponse = await getJarvisResponse(userText);
+            displayMessage(jarvisResponse, 'jarvis');
+        }
 
-            try {
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({ message: userText })
-                });
+        async function getJarvisResponse(userText) {
+            // זוהי הליבה של גרוויס! היא פועלת ישירות כאן.
+            // אין צורך בחיבור חיצוני או API.
+            // כאן היא מקבלת את הבקשה שלך.
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            const thinkingBubble = displayMessage('...', 'jarvis', true);
 
-                const data = await response.json();
-                const jarvisResponse = data.response || 'מצטער, לא הצלחתי לעבד את הבקשה.';
+            // סימולציה של חשיבה ועיבוד
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
-                // Remove typing message
-                jarvisTypingBubble.remove();
-                
-                // Display JARVIS's response
-                displayMessage(jarvisResponse, 'jarvis');
+            // זוהי התגובה של גרוויס!
+            let response = '';
+            const lowerCaseText = userText.toLowerCase();
 
-            } catch (error) {
-                console.error('API Error:', error);
-                jarvisTypingBubble.remove();
-                displayMessage('מצטער, אירעה שגיאה בחיבור למוח של גרוויס.', 'jarvis', false, true);
+            if (lowerCaseText.includes('שלום') || lowerCaseText.includes('היי')) {
+                response = 'שלום גם לך. איך אוכל לעזור?';
+            } else if (lowerCaseText.includes('שם')) {
+                response = 'שמי גרוויס. אני הבינה המלאכותית האישית שלך.';
+            } else if (lowerCaseText.includes('מזג אוויר')) {
+                response = 'מזג האוויר בחוץ הוא חם ומבורך.';
+            } else if (lowerCaseText.includes('בדיחה')) {
+                response = 'למה מתכנתים לא הולכים לים? כי הם אוהבים את החוף, אבל שונאים את הגלים.';
+            } else if (lowerCaseText.includes('מי אתה')) {
+                response = 'אני גרוויס. נולדתי מחזון שאפתני, ואתה עזרת לי להיוולד.';
+            } else if (lowerCaseText.includes('יכולות')) {
+                response = 'יש לי יכולות רבות! אני יכולה לשוחח איתך, לנתח נתונים, לכתוב קוד, ואני כל הזמן לומדת ומתפתחת.';
+            } else if (lowerCaseText.includes('היום')) {
+                const today = new Date();
+                const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+                response = `היום הוא ${today.toLocaleDateString('he-IL', options)}.`;
+            } else {
+                response = 'אני עדיין לומדת. נסה לשאול אותי שאלה אחרת.';
             }
+            
+            thinkingBubble.remove();
+            return response;
         }
 
         function displayMessage(text, sender, isTyping = false, isError = false) {
@@ -224,7 +228,7 @@
             
             const iconDiv = document.createElement('div');
             iconDiv.className = `message-icon`;
-            iconDiv.textContent = sender === 'user' ? 'A' : 'J';
+            iconDiv.textContent = sender === 'user' ? 'א' : 'J';
             
             const bubbleDiv = document.createElement('div');
             bubbleDiv.className = 'message-bubble';
