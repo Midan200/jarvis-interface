@@ -1,116 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="he">
 <head>
-    <title>JARVIS</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>גרוויס | הבינה המלאכותית האישית שלך</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-        .container { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
-        .chat-box { border-radius: 10px; padding: 15px; margin-bottom: 20px; background-color: #161b22; overflow-y: auto; max-height: 70vh; }
-        .message { margin-bottom: 10px; line-height: 1.5; }
-        .user-message { text-align: right; color: #58a6ff; }
-        .jarvis-message { text-align: left; color: #a4a4a4; }
-        .input-container { display: flex; }
-        input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #30363d; border-radius: 5px; background-color: #0d1117; color: #c9d1d9; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #21262d; color: #c9d1d9; cursor: pointer; margin-left: 10px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="chat-box" id="chatBox">
-            <div class="message jarvis-message">גרוויס: שלום לך. אני מוכנה.</div>
-        </div>
-        <div class="input-container">
-            <input type="text" id="userInput" placeholder="שאל את גרוויס..." />
-            <button id="sendButton">שלח</button>
-        </div>
-    </div>
-
-    <script>
-        // API KEY - החלף את המקום הזה במפתח ה-API שלך
-        const API_KEY = '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D';
-        const API_ENDPOINT = 'https://jarvis-api.googledevsandbox.com/api/v1/chat';
-
-        document.getElementById('sendButton').addEventListener('click', sendMessage);
-        document.getElementById('userInput').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        async function sendMessage() {
-            const userInput = document.getElementById('userInput').value;
-            if (userInput.trim() === '') return;
-
-            // הוספת הודעת המשתמש לצ'אט
-            const chatBox = document.getElementById('chatBox');
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'message user-message';
-            userMessageDiv.textContent = userInput;
-            chatBox.appendChild(userMessageDiv);
-
-            document.getElementById('userInput').value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // שליחת הבקשה ל-API של גרוויס
-            try {
-                const response = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({ message: userInput })
-                });
-
-                const data = await response.json();
-                const jarvisResponse = data.response;
-
-                // הוספת תשובת גרוויס לצ'אט
-                const jarvisMessageDiv = document.createElement('div');
-                jarvisMessageDiv.className = 'message jarvis-message';
-                jarvisMessageDiv.textContent = `גרוויס: ${jarvisResponse}`;
-                chatBox.appendChild(jarvisMessageDiv);
-
-                chatBox.scrollTop = chatBox.scrollHeight;
-            } catch (error) {
-                console.error('Error:', error);
-                const errorMessageDiv = document.createElement('div');
-                errorMessageDiv.className = 'message jarvis-message';
-                errorMessageDiv.textContent = 'גרוויס: מצטער, אירעה שגיאה בחיבור.';
-                chatBox.appendChild(errorMessageDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        
+        :root {
+            --bg-color: #121212;
+            --main-color: #4CAF50;
+            --text-color: #e0e0e0;
+            --secondary-color: #888888;
+            --input-bg: #212121;
+            --chat-bg: #1e1e1e;
+            --jarvis-message-bg: #2c2c2c;
+            --user-message-bg: #3c3c3c;
+            --border-color: #383838;
         }
-    </script>
-</body>
-</html>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>JARVIS</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #0d1117; color: #c9d1d9; display: flex; flex-direction: column; height: 100vh; margin: 0; }
-        .container { flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
-        .chat-box { border-radius: 10px; padding: 15px; margin-bottom: 20px; background-color: #161b22; overflow-y: auto; max-height: 70vh; scroll-behavior: smooth; }
-        .message { margin-bottom: 10px; line-height: 1.5; }
-        .user-message { text-align: right; color: #58a6ff; }
-        .jarvis-message { text-align: left; color: #a4a4a4; }
-        .jarvis-message.error { color: #f85149; }
-        .jarvis-message.status { color: #ffab78; font-style: italic; }
-        .input-container { display: flex; }
-        input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #30363d; border-radius: 5px; background-color: #0d1117; color: #c9d1d9; }
-        button { padding: 10px 20px; border: none; border-radius: 5px; background-color: #21262d; color: #c9d1d9; cursor: pointer; margin-left: 10px; }
+        * {
+            box-sizing: border-box;
+            direction: rtl;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--main-color);
+            font-size: 2em;
+        }
+
+        .chat-box {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .message-container {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .message-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--main-color);
+            color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-left: 10px;
+        }
+
+        .user-icon {
+            background-color: var(--secondary-color);
+            margin-right: 10px;
+            margin-left: 0;
+        }
+
+        .message-bubble {
+            padding: 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            line-height: 1.6;
+        }
+
+        .jarvis-message .message-bubble {
+            background-color: var(--jarvis-message-bg);
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .user-message .message-bubble {
+            background-color: var(--user-message-bg);
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 10px 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #userInput {
+            flex-grow: 1;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 25px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1em;
+            margin-left: 10px;
+        }
+
+        #sendButton {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background-color: var(--main-color);
+            color: var(--bg-color);
+            font-size: 1.5em;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        #sendButton:hover {
+            background-color: #3e8e41;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="chat-box" id="chatBox">
-            <div class="message jarvis-message">גרוויס: שלום לך. אני מוכנה.</div>
+        <div class="header">
+            <h1>גרוויס</h1>
+            <p>הבינה המלאכותית האישית שלך</p>
         </div>
-        <div class="input-container">
+        <div class="chat-box" id="chatBox">
+            <div class="message-container jarvis-message">
+                <div class="message-icon">J</div>
+                <div class="message-bubble">שלום לך. אני גרוויס, מוכנה.</div>
+            </div>
+        </div>
+        <div class="input-area">
             <input type="text" id="userInput" placeholder="שאל את גרוויס..." />
-            <button id="sendButton">שלח</button>
+            <button id="sendButton">▲</button>
         </div>
     </div>
 
@@ -118,34 +166,28 @@
         const API_KEY = '1A2B3C4D5E6F7A8B9C0D1E2F3A4B5C6D';
         const API_ENDPOINT = 'https://jarvis-api.googledevsandbox.com/api/v1/chat';
 
-        document.getElementById('sendButton').addEventListener('click', sendMessage);
-        document.getElementById('userInput').addEventListener('keypress', function(event) {
+        const chatBox = document.getElementById('chatBox');
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', function(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
         });
 
         async function sendMessage() {
-            const userInput = document.getElementById('userInput').value;
-            if (userInput.trim() === '') return;
+            const userText = userInput.value.trim();
+            if (userText === '') return;
 
-            // הוספת הודעת המשתמש לצ'אט
-            const chatBox = document.getElementById('chatBox');
-            const userMessageDiv = document.createElement('div');
-            userMessageDiv.className = 'message user-message';
-            userMessageDiv.textContent = userInput;
-            chatBox.appendChild(userMessageDiv);
+            // Display user message
+            displayMessage(userText, 'user');
+            userInput.value = '';
 
-            document.getElementById('userInput').value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Display "typing..." message from JARVIS
+            const jarvisTypingBubble = displayMessage('...', 'jarvis', true);
 
-            const statusMessageDiv = document.createElement('div');
-            statusMessageDiv.className = 'message jarvis-message status';
-            statusMessageDiv.textContent = 'גרוויס: מעבד...';
-            chatBox.appendChild(statusMessageDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // שליחת הבקשה ל-API של גרוויס
             try {
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
@@ -153,36 +195,52 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${API_KEY}`
                     },
-                    body: JSON.stringify({ message: userInput })
+                    body: JSON.stringify({ message: userText })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Server responded with an error.');
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
-                const jarvisResponse = data.response;
+                const jarvisResponse = data.response || 'מצטער, לא הצלחתי לעבד את הבקשה.';
 
-                statusMessageDiv.remove();
+                // Remove typing message
+                jarvisTypingBubble.remove();
+                
+                // Display JARVIS's response
+                displayMessage(jarvisResponse, 'jarvis');
 
-                // הוספת תשובת גרוויס לצ'אט
-                const jarvisMessageDiv = document.createElement('div');
-                jarvisMessageDiv.className = 'message jarvis-message';
-                jarvisMessageDiv.textContent = `גרוויס: ${jarvisResponse}`;
-                chatBox.appendChild(jarvisMessageDiv);
-
-                chatBox.scrollTop = chatBox.scrollHeight;
             } catch (error) {
-                console.error('Error:', error);
-                statusMessageDiv.remove();
-                const errorMessageDiv = document.createElement('div');
-                errorMessageDiv.className = 'message jarvis-message error';
-                errorMessageDiv.textContent = 'גרוויס: מצטער, אירעה שגיאה בחיבור.';
-                chatBox.appendChild(errorMessageDiv);
-                chatBox.scrollTop = chatBox.scrollHeight;
+                console.error('API Error:', error);
+                jarvisTypingBubble.remove();
+                displayMessage('מצטער, אירעה שגיאה בחיבור למוח של גרוויס.', 'jarvis', false, true);
             }
+        }
+
+        function displayMessage(text, sender, isTyping = false, isError = false) {
+            const messageContainer = document.createElement('div');
+            messageContainer.className = `message-container ${sender}-message`;
+            
+            const iconDiv = document.createElement('div');
+            iconDiv.className = `message-icon`;
+            iconDiv.textContent = sender === 'user' ? 'A' : 'J';
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.textContent = text;
+            
+            if (isError) {
+                bubbleDiv.style.color = '#f85149';
+            }
+
+            messageContainer.appendChild(iconDiv);
+            messageContainer.appendChild(bubbleDiv);
+            chatBox.appendChild(messageContainer);
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            return messageContainer;
         }
     </script>
 </body>
 </html>
-
