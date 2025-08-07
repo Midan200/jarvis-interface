@@ -1,4 +1,4 @@
-                    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he">
 <head>
     <meta charset="UTF-8">
@@ -207,7 +207,7 @@
                 response = 'יש לי יכולות רבות! אני יכולה לשוחח איתך, לנתח נתונים, לכתוב קוד, ואני כל הזמן לומדת ומתפתחת. כעת, אני מחוברת גם לרשת ואני יכולה לבצע חיפוש ולהתחבר לנתונים בזמן אמת.';
             } 
             
-            // יכולת מורחבת: חיפוש ברשת באמצעות API ציבורי
+            // יכולת מורחבת: חיבור ברשת באמצעות API ציבורי
             else if (lowerCaseText.includes('חפש') || lowerCaseText.includes('מה זה')) {
                 const query = userText.substring(userText.indexOf('חפש') + 4).trim();
                 const searchResult = await fetch(`https://api.duckduckgo.com/?q=${query}&format=json&t=MyJarvisApp&nohtml=1`);
